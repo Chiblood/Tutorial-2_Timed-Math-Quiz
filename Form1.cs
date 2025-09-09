@@ -24,6 +24,8 @@ namespace Tutorial_2_Timed_Math_Quiz
         int dividend;
         int divisor;
 
+        int timeLeft;
+
         // This method starts the quiz by filling in all of the problems.
         public void StartTheQuiz()
         {
@@ -59,9 +61,24 @@ namespace Tutorial_2_Timed_Math_Quiz
             quotient.Value = 0;
 
             // Start the timer.
-
+            timeLeft = 30;
+            timeLabel.Text = "30 seconds";
+            timer1.Start();
         }
-        // These integer variables store the numbers for the addition problem.
+        /// <summary>
+        /// Check the answers to see if the user got everything right.
+        /// </summary>
+        /// <returns>True if the answer's correct, false otherwise.</returns>
+        private bool CheckTheAnswer()
+        {
+            if ((addend1 + addend2 == sum.Value)
+                && (minuend - subtrahend == difference.Value)
+                && (multiplicand * multiplier == product.Value)
+                && (dividend / divisor == quotient.Value))
+                return true;
+            else
+                return false;
+        }
 
         public Form1()
         {
@@ -77,6 +94,35 @@ namespace Tutorial_2_Timed_Math_Quiz
         {
             StartTheQuiz();
             startButton.Enabled = false;
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            if (CheckTheAnswer())
+            {
+                // If CheckTheAnswer() returns true, then the user got the answer right. Stop the timer and show a MessageBox.
+                timer1.Stop();
+                MessageBox.Show("You got all the answers right!", "Congratulations!");
+                startButton.Enabled = true;
+            }
+            else if (timeLeft > 0)
+            {
+                // If there is still time left, continue counting down.
+                timeLeft--;
+                timeLabel.Text = timeLeft + " seconds";
+            }
+            else
+            {
+                // If the user ran out of time, stop the timer, show a MessageBox, and fill in the answers.
+                timer1.Stop();
+                timeLabel.Text = "Time's up!";
+                MessageBox.Show("You didn't finish in time.", "Sorry!");
+                sum.Value = addend1 + addend2;
+                difference.Value = minuend - subtrahend;
+                product.Value = multiplicand * multiplier;
+                quotient.Value = dividend / divisor;
+                startButton.Enabled = true;
+            }
         }
     }
 }
